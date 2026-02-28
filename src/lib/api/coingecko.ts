@@ -15,13 +15,32 @@ import type {
 
 const BASE_URL = "https://api.coingecko.com/api/v3";
 
+/** Thrown when CoinGecko rate limit (429) is exceeded */
+export class CoinGeckoRateLimitError extends Error {
+  readonly status = 429;
+
+  constructor(message: string) {
+    super(message);
+    this.name = "CoinGeckoRateLimitError";
+  }
+}
+
 /** Request config - extend for API key when using Demo/Pro tier */
 const getHeaders = (): HeadersInit => ({
   Accept: "application/json",
   "User-Agent": "CryptoDashboard/1.0",
 });
 
-async function fetchApi<T>(endpoint: string, params?: Record<string, string>): Promise<T> {
+interface FetchOptions {
+  /** ISR revalidate in seconds (default 60, use 300+ for less frequent data) */
+  revalidate?: number;
+}
+
+async function fetchApi<T>(
+  endpoint: string,
+  params?: Record<string, string>,
+  options?: FetchOptions
+): Promise<T> {
   const url = new URL(`${BASE_URL}${endpoint}`);
   if (params) {
     Object.entries(params).forEach(([k, v]) => {
@@ -29,13 +48,20 @@ async function fetchApi<T>(endpoint: string, params?: Record<string, string>): P
     });
   }
 
+  const revalidate = options?.revalidate ?? 60;
+
   const res = await fetch(url.toString(), {
     headers: getHeaders(),
-    next: { revalidate: 60 }, // ISR: revalidate every 60s for dashboard
+    next: { revalidate },
   });
 
   if (!res.ok) {
     const text = await res.text();
+    if (res.status === 429) {
+      throw new CoinGeckoRateLimitError(
+        "Rate limit exceeded. Please try again in a minute."
+      );
+    }
     throw new Error(`CoinGecko API error ${res.status}: ${text.slice(0, 200)}`);
   }
 
@@ -64,7 +90,7 @@ export async function getCoinsMarkets(
   };
   if (ids) params.ids = ids;
 
-  return fetchApi<CoinMarket[]>("/coins/markets", params);
+  return fetchApi<CoinMarket[]>("/coins/markets", params, { revalidate: ids ? 300 : 60 });
 }
 
 /**
@@ -100,10 +126,32 @@ export async function searchCoins(query: string): Promise<SearchResult> {
 }
 
 /**
+ * Fetch simple prices for multiple coins (lighter than coins/markets).
+ * Use for trending page to reduce rate limit usage.
+ */
+export async function getSimplePrices(
+  ids: string[],
+  options?: { include24hChange?: boolean }
+): Promise<Record<string, { usd?: number; usd_24h_change?: number }>> {
+  if (ids.length === 0) return {};
+  const params: Record<string, string> = {
+    ids: ids.join(","),
+    vs_currencies: "usd",
+  };
+  if (options?.include24hChange) params.include_24hr_change = "true";
+  return fetchApi<Record<string, { usd?: number; usd_24h_change?: number }>>(
+    "/simple/price",
+    params,
+    { revalidate: 300 }
+  );
+}
+
+/**
  * Fetch trending coins (last 24h).
+ * Uses longer cache (5 min) to reduce rate limit hits.
  */
 export async function getTrendingCoins(): Promise<TrendingSearch> {
-  return fetchApi<TrendingSearch>("/search/trending");
+  return fetchApi<TrendingSearch>("/search/trending", undefined, { revalidate: 300 });
 }
 
 /**

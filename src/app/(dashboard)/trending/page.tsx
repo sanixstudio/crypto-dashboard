@@ -1,19 +1,31 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { getTrendingCoins, getCoinsMarkets } from "@/lib/api/coingecko";
+import { getTrendingCoins, getSimplePrices, CoinGeckoRateLimitError } from "@/lib/api/coingecko";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
-export const revalidate = 60;
+export const revalidate = 300;
 
 async function TrendingContent() {
   const trending = await getTrendingCoins();
-  const ids = trending.coins.map((c) => c.item.id).join(",");
-  const coins = ids ? await getCoinsMarkets("usd", 10, 1, ids) : [];
+  const ids = trending.coins.map((c) => c.item.id);
+  let prices: Record<string, { usd?: number; usd_24h_change?: number }> = {};
+  let rateLimited = false;
 
-  const coinMap = new Map(coins.map((c) => [c.id, c]));
+  try {
+    prices = ids.length > 0
+      ? await getSimplePrices(ids, { include24hChange: true })
+      : {};
+  } catch (err) {
+    if (err instanceof CoinGeckoRateLimitError) {
+      rateLimited = true;
+    } else {
+      throw err;
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -21,9 +33,19 @@ async function TrendingContent() {
         <h1 className="text-2xl font-bold tracking-tight">Trending</h1>
         <p className="text-muted-foreground">Most searched coins in the last 24 hours</p>
       </div>
+      {rateLimited && (
+        <Alert variant="default" className="border-amber-500/50 bg-amber-500/10">
+          <AlertDescription>
+            Rate limit reached. Prices will update when you refresh in a minute.
+          </AlertDescription>
+        </Alert>
+      )}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {trending.coins.map(({ item }, i) => {
-          const market = coinMap.get(item.id);
+          const priceData = prices[item.id];
+          const usd = priceData?.usd;
+          const change24h = priceData?.usd_24h_change;
+
           return (
             <Link key={item.id} href={`/coin/${item.id}`}>
               <Card className="transition-colors hover:bg-accent/50 cursor-pointer h-full">
@@ -42,22 +64,26 @@ async function TrendingContent() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {market ? (
+                  {usd != null ? (
                     <div className="text-sm">
                       <p className="font-semibold">
-                        ${market.current_price?.toLocaleString(undefined, {
+                        ${usd.toLocaleString(undefined, {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 6,
-                        }) ?? "—"}
+                        })}
                       </p>
                       <p className="text-muted-foreground">
-                        {market.price_change_percentage_24h != null
-                          ? `${market.price_change_percentage_24h >= 0 ? "+" : ""}${market.price_change_percentage_24h.toFixed(2)}% 24h`
+                        {change24h != null
+                          ? `${change24h >= 0 ? "+" : ""}${change24h.toFixed(2)}% 24h`
                           : "—"}
                       </p>
                     </div>
+                  ) : rateLimited ? (
+                    <p className="text-sm text-muted-foreground">
+                      {item.price_btc != null ? `฿${item.price_btc.toFixed(8)}` : "—"}
+                    </p>
                   ) : (
-                    <p className="text-sm text-muted-foreground">Loading price...</p>
+                    <p className="text-sm text-muted-foreground">—</p>
                   )}
                 </CardContent>
               </Card>
