@@ -4,10 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { ArrowLeft } from "lucide-react";
-import { getCoinById, getCoinMarketChart } from "@/lib/api/coingecko";
+import { getCoinById, getCoinOHLC } from "@/lib/api/coingecko";
 import { getWatchlist } from "@/app/actions/watchlist";
 import { WatchlistButton } from "@/components/crypto/watchlist-button";
-import { PriceChart } from "@/components/crypto/price-chart";
+import { CandlestickChart } from "@/components/crypto/candlestick-chart";
 import { formatPrice, formatCompact, formatPercent, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -24,11 +24,11 @@ interface PageProps {
 async function CoinDetailContent({ id }: { id: string }) {
   try {
     const { userId } = await auth();
-    const [coin, chart7d, chart30d, chart90d, watchlist] = await Promise.all([
+    const [coin, ohlc7d, ohlc30d, ohlc90d, watchlist] = await Promise.all([
       getCoinById(id),
-      getCoinMarketChart(id, "usd", 7),
-      getCoinMarketChart(id, "usd", 30),
-      getCoinMarketChart(id, "usd", 90),
+      getCoinOHLC(id, "usd", 7),
+      getCoinOHLC(id, "usd", 30),
+      getCoinOHLC(id, "usd", 90),
       userId ? getWatchlist() : Promise.resolve([]),
     ]);
     const md = coin.market_data;
@@ -82,13 +82,13 @@ async function CoinDetailContent({ id }: { id: string }) {
             <TabsTrigger value="90d">90 Days</TabsTrigger>
           </TabsList>
           <TabsContent value="7d">
-            <ChartCard data={chart7d} />
+            <ChartCard data={ohlc7d} />
           </TabsContent>
           <TabsContent value="30d">
-            <ChartCard data={chart30d} />
+            <ChartCard data={ohlc30d} />
           </TabsContent>
           <TabsContent value="90d">
-            <ChartCard data={chart90d} />
+            <ChartCard data={ohlc90d} />
           </TabsContent>
         </Tabs>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -132,14 +132,14 @@ async function CoinDetailContent({ id }: { id: string }) {
   }
 }
 
-function ChartCard({ data }: { data: { prices: [number, number][]; market_caps: [number, number][]; total_volumes: [number, number][] } }) {
+function ChartCard({ data }: { data: import("@/lib/api/coingecko-types").OHLCData }) {
   return (
     <Card>
       <CardHeader>
         <h3 className="text-sm font-medium">Price Chart (USD)</h3>
       </CardHeader>
       <CardContent>
-        <PriceChart data={data} height={350} />
+        <CandlestickChart data={data} height={350} />
       </CardContent>
     </Card>
   );

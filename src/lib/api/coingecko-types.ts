@@ -48,6 +48,10 @@ export interface GlobalMarketData {
   };
 }
 
+/** OHLC data from /coins/{id}/ohlc - [timestamp_ms, open, high, low, close] */
+export type OHLCDataPoint = [number, number, number, number, number];
+export type OHLCData = OHLCDataPoint[];
+
 /** Market chart data from /coins/{id}/market_chart */
 export interface MarketChartData {
   prices: [number, number][];

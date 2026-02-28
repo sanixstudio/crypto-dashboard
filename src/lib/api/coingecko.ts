@@ -8,6 +8,7 @@ import type {
   CoinMarket,
   GlobalMarketData,
   MarketChartData,
+  OHLCData,
   SearchResult,
   TrendingSearch,
   CoinDetail,
@@ -107,6 +108,23 @@ export async function getCoinsMarkets(
  */
 export async function getGlobalData(): Promise<GlobalMarketData> {
   return fetchApi<GlobalMarketData>("/global");
+}
+
+/**
+ * Fetch OHLC (candlestick) data for a coin.
+ * @param id - CoinGecko coin ID
+ * @param currency - vs_currency
+ * @param days - 1, 7, 14, 30, 90, 180, 365, or "max"
+ */
+export async function getCoinOHLC(
+  id: string,
+  currency = "usd",
+  days: number | "max" = 7
+): Promise<OHLCData> {
+  return fetchApi<OHLCData>(`/coins/${encodeURIComponent(id)}/ohlc`, {
+    vs_currency: currency,
+    days: String(days),
+  }, { revalidate: 60 });
 }
 
 /**
