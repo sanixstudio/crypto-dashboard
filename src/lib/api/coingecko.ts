@@ -4,6 +4,7 @@
  * @see https://www.coingecko.com/en/developers/dashboard
  */
 
+import queryString from "query-string";
 import type {
   CoinMarket,
   GlobalMarketData,
@@ -46,21 +47,20 @@ async function fetchApi<T>(
   params?: Record<string, string>,
   options?: FetchOptions
 ): Promise<T> {
-  const url = new URL(`${BASE_URL}${endpoint}`);
   const apiKey = getApiKey();
-
-  if (params) {
-    Object.entries(params).forEach(([k, v]) => {
-      if (v != null && v !== "") url.searchParams.set(k, v);
-    });
-  }
-  if (apiKey) {
-    url.searchParams.set("x_cg_demo_api_key", apiKey);
-  }
+  const allParams: Record<string, string> = {
+    ...params,
+    ...(apiKey && { x_cg_demo_api_key: apiKey }),
+  };
+  const filtered = Object.fromEntries(
+    Object.entries(allParams).filter(([, v]) => v != null && v !== "")
+  ) as Record<string, string>;
+  const search = queryString.stringify(filtered);
+  const url = `${BASE_URL}${endpoint}${search ? `?${search}` : ""}`;
 
   const revalidate = options?.revalidate ?? 60;
 
-  const res = await fetch(url.toString(), {
+  const res = await fetch(url, {
     headers: getHeaders(),
     next: { revalidate },
   });
