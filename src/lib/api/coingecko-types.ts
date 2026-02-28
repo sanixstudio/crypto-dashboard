@@ -110,6 +110,25 @@ export interface CoinDetailLinks {
   repos_url?: { github?: string[]; bitbucket?: string[] };
 }
 
+/** Category from /coins/categories/list */
+export interface CategoryListItem {
+  category_id: string;
+  name: string;
+}
+
+/** Historical snapshot from /coins/{id}/history */
+export interface CoinHistory {
+  id: string;
+  symbol: string;
+  name: string;
+  image: { thumb: string; small: string };
+  market_data: {
+    current_price: Record<string, number>;
+    market_cap: Record<string, number>;
+    total_volume: Record<string, number>;
+  };
+}
+
 /** Coin detail from /coins/{id} (full) */
 export interface CoinDetail {
   id: string;

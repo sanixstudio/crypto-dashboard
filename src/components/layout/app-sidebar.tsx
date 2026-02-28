@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Search, TrendingUp, Home, Settings, Star } from "lucide-react";
+import { BarChart3, Search, TrendingUp, Home, Settings, Star, FolderOpen } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -22,6 +22,7 @@ const navItems = [
   { href: "/", label: "Dashboard", icon: Home },
   { href: "/watchlist", label: "Watchlist", icon: Star },
   { href: "/coins", label: "Top Coins", icon: BarChart3 },
+  { href: "/categories", label: "Categories", icon: FolderOpen },
   { href: "/search", label: "Search", icon: Search },
   { href: "/trending", label: "Trending", icon: TrendingUp },
   { href: "/settings", label: "Settings", icon: Settings },

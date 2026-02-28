@@ -10,6 +10,7 @@ import { getCurrency } from "@/app/actions/currency";
 import { WatchlistButton } from "@/components/crypto/watchlist-button";
 import { RecordCoinView } from "@/components/crypto/record-coin-view";
 import { CoinDetailActions } from "@/components/crypto/coin-detail-actions";
+import { CoinHistorySection } from "@/components/crypto/coin-history-section";
 import { CandlestickChart } from "@/components/crypto/candlestick-chart";
 import { formatPriceWithSymbol, formatCompact, formatPercent, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -159,6 +160,14 @@ async function CoinDetailContent({ id }: { id: string }) {
             </CardContent>
           </Card>
         )}
+
+        <Suspense fallback={null}>
+          <CoinHistorySection
+            coinId={id}
+            coinName={coin.name}
+            currency={currency}
+          />
+        </Suspense>
       </div>
     );
   } catch {

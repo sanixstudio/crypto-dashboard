@@ -7,6 +7,8 @@
 import queryString from "query-string";
 import type {
   CoinMarket,
+  CoinHistory,
+  CategoryListItem,
   GlobalMarketData,
   MarketChartData,
   OHLCData,
@@ -83,12 +85,15 @@ async function fetchApi<T>(
  * @param currency - vs_currency (e.g. usd)
  * @param perPage - results per page (1-250)
  * @param page - page number
+ * @param ids - comma-separated coin IDs to filter
+ * @param category - category ID from /coins/categories/list
  */
 export async function getCoinsMarkets(
   currency = "usd",
   perPage = 50,
   page = 1,
-  ids?: string
+  ids?: string,
+  category?: string
 ): Promise<CoinMarket[]> {
   const params: Record<string, string> = {
     vs_currency: currency,
@@ -99,8 +104,11 @@ export async function getCoinsMarkets(
     price_change_percentage: "1h,24h,7d",
   };
   if (ids) params.ids = ids;
+  if (category) params.category = category;
 
-  return fetchApi<CoinMarket[]>("/coins/markets", params, { revalidate: ids ? 300 : 60 });
+  return fetchApi<CoinMarket[]>("/coins/markets", params, {
+    revalidate: ids || category ? 300 : 60,
+  });
 }
 
 /**
@@ -191,4 +199,30 @@ export async function getCoinById(id: string): Promise<CoinDetail> {
     community_data: "false",
     developer_data: "false",
   });
+}
+
+/**
+ * Fetch list of coin categories.
+ * Use category_id with getCoinsMarkets(category) to filter by category.
+ */
+export async function getCategoriesList(): Promise<CategoryListItem[]> {
+  return fetchApi<CategoryListItem[]>("/coins/categories/list", undefined, {
+    revalidate: 300,
+  });
+}
+
+/**
+ * Fetch historical market data for a coin at a specific date.
+ * @param id - CoinGecko coin ID
+ * @param date - Date in YYYY-MM-DD format (UTC 00:00 snapshot)
+ */
+export async function getCoinHistory(
+  id: string,
+  date: string
+): Promise<CoinHistory> {
+  return fetchApi<CoinHistory>(
+    `/coins/${encodeURIComponent(id)}/history`,
+    { date, localization: "false" },
+    { revalidate: 86400 }
+  );
 }
