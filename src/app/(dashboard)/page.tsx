@@ -47,10 +47,10 @@ async function DashboardContent() {
   const topCoins = coins.slice(0, 12);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <p className="mt-1 text-muted-foreground">
           Global market overview and top cryptocurrencies
         </p>
       </div>
@@ -58,7 +58,7 @@ async function DashboardContent() {
       <RecentlyViewed />
 
       {!userId && (
-        <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-muted/30 px-4 py-3">
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-border/60 bg-muted/30 px-5 py-4 backdrop-blur-sm">
           <p className="text-sm text-muted-foreground">
             <strong>Sign in</strong> to save coins to your watchlist and track them across devices.
           </p>
@@ -89,20 +89,20 @@ async function DashboardContent() {
       <GlobalStats data={globalData} currency={currency} />
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card>
+        <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
           <CardHeader>
-            <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+            <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2 tracking-wide uppercase">
               <TrendingUp className="h-4 w-4 text-emerald-500" />
               Top Gainers 24h
             </h3>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {gainers.map((coin) => (
                 <Link
                   key={coin.id}
                   href={`/coin/${coin.id}`}
-                  className="flex items-center justify-between rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent/50"
+                  className="flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-all hover:bg-emerald-500/10"
                 >
                   <span className="font-medium">{coin.symbol.toUpperCase()}</span>
                   <span className="font-medium text-emerald-600 dark:text-emerald-400">
@@ -113,20 +113,20 @@ async function DashboardContent() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
           <CardHeader>
-            <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+            <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2 tracking-wide uppercase">
               <TrendingDown className="h-4 w-4 text-red-500" />
               Top Losers 24h
             </h3>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {losers.map((coin) => (
                 <Link
                   key={coin.id}
                   href={`/coin/${coin.id}`}
-                  className="flex items-center justify-between rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent/50"
+                  className="flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-all hover:bg-red-500/10"
                 >
                   <span className="font-medium">{coin.symbol.toUpperCase()}</span>
                   <span className="font-medium text-red-600 dark:text-red-400">
@@ -141,7 +141,7 @@ async function DashboardContent() {
       </div>
 
       <div>
-        <h2 className="mb-4 text-lg font-semibold">Top Coins by Market Cap</h2>
+        <h2 className="mb-4 text-xl font-semibold tracking-tight">Top Coins by Market Cap</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {topCoins.map((coin) => (
             <CoinCard
@@ -152,9 +152,9 @@ async function DashboardContent() {
             />
           ))}
         </div>
-        <div className="mt-4">
+        <div className="mt-6">
           <Link href="/coins">
-            <Button variant="outline">View All Coins</Button>
+            <Button variant="outline" className="rounded-lg">View All Coins</Button>
           </Link>
         </div>
       </div>

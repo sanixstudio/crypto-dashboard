@@ -20,42 +20,42 @@ export function GlobalStats({ data, currency = "usd" }: GlobalStatsProps) {
 
   return (
     <div className="space-y-4">
-      <Card>
+      <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
         <CardHeader>
-          <h3 className="text-sm font-medium text-muted-foreground">
+          <h3 className="text-sm font-medium text-muted-foreground tracking-wide uppercase">
             Global Crypto Market
           </h3>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <p className="text-2xl font-bold">{formatCompact(totalCap)}</p>
+          <div className="rounded-lg p-4 transition-colors hover:bg-muted/30">
+            <p className="text-2xl font-bold tabular-nums">{formatCompact(totalCap)}</p>
             <p className="text-xs text-muted-foreground">Total Market Cap</p>
             <p className={`text-xs ${capChange >= 0 ? "text-emerald-600" : "text-red-600"}`}>
               {formatPercent(capChange)} 24h
             </p>
           </div>
-          <div>
-            <p className="text-2xl font-bold">{formatCompact(totalVol)}</p>
+          <div className="rounded-lg p-4 transition-colors hover:bg-muted/30">
+            <p className="text-2xl font-bold tabular-nums">{formatCompact(totalVol)}</p>
             <p className="text-xs text-muted-foreground">24h Volume</p>
             <p className={`text-xs ${volChange >= 0 ? "text-emerald-600" : "text-red-600"}`}>
               {formatPercent(volChange)} 24h
             </p>
           </div>
-          <div>
-            <p className="text-2xl font-bold">{d.active_cryptocurrencies?.toLocaleString() ?? "—"}</p>
+          <div className="rounded-lg p-4 transition-colors hover:bg-muted/30">
+            <p className="text-2xl font-bold tabular-nums">{d.active_cryptocurrencies?.toLocaleString() ?? "—"}</p>
             <p className="text-xs text-muted-foreground">Active Cryptocurrencies</p>
           </div>
-          <div>
-            <p className="text-2xl font-bold">{d.markets?.toLocaleString() ?? "—"}</p>
+          <div className="rounded-lg p-4 transition-colors hover:bg-muted/30">
+            <p className="text-2xl font-bold tabular-nums">{d.markets?.toLocaleString() ?? "—"}</p>
             <p className="text-xs text-muted-foreground">Markets</p>
           </div>
         </CardContent>
       </Card>
 
       {Object.keys(dominance).length > 0 && (
-        <Card>
+        <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
           <CardHeader>
-            <h3 className="text-sm font-medium text-muted-foreground">
+            <h3 className="text-sm font-medium text-muted-foreground tracking-wide uppercase">
               Market Dominance
             </h3>
           </CardHeader>
@@ -64,9 +64,9 @@ export function GlobalStats({ data, currency = "usd" }: GlobalStatsProps) {
               {["btc", "eth", "usdt", "bnb", "sol", "usdc"].map(
                 (key) =>
                   dominance[key] != null && (
-                    <div key={key} className="flex items-center gap-2">
-                      <span className="text-sm font-medium uppercase">{key}</span>
-                      <span className="text-sm text-muted-foreground">
+                    <div key={key} className="flex items-center gap-2 rounded-lg px-3 py-2 transition-colors hover:bg-muted/30">
+                      <span className="text-sm font-semibold uppercase tracking-wider">{key}</span>
+                      <span className="text-sm font-mono tabular-nums text-muted-foreground">
                         {dominance[key].toFixed(1)}%
                       </span>
                     </div>

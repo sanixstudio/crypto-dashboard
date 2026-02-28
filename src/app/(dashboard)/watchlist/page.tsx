@@ -15,14 +15,14 @@ async function WatchlistContent() {
   const { userId } = await auth();
   if (!userId) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 py-16 text-center">
-        <Star className="mb-4 h-12 w-12 text-muted-foreground" />
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-muted/30 py-16 text-center backdrop-blur-sm">
+        <Star className="mb-4 h-12 w-12 text-primary/50" />
         <h2 className="text-lg font-semibold">Sign in to use your watchlist</h2>
         <p className="mt-2 max-w-sm text-sm text-muted-foreground">
           Save your favorite coins and track them in one place. Your watchlist syncs across devices.
         </p>
         <Link href="/sign-in">
-          <Button className="mt-4">Sign In</Button>
+          <Button className="mt-4 rounded-lg">Sign In</Button>
         </Link>
       </div>
     );
@@ -31,14 +31,14 @@ async function WatchlistContent() {
   const [watchlist, currency] = await Promise.all([getWatchlist(), getCurrency()]);
   if (watchlist.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 py-16 text-center">
-        <Star className="mb-4 h-12 w-12 text-muted-foreground" />
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-muted/30 py-16 text-center backdrop-blur-sm">
+        <Star className="mb-4 h-12 w-12 text-primary/50" />
         <h2 className="text-lg font-semibold">Your watchlist is empty</h2>
         <p className="mt-2 max-w-sm text-sm text-muted-foreground">
           Click the star on any coin to add it here. Start by browsing top coins or searching.
         </p>
         <Link href="/coins">
-          <Button variant="outline" className="mt-4">
+          <Button variant="outline" className="mt-4 rounded-lg">
             Browse Top Coins
           </Button>
         </Link>
@@ -62,10 +62,10 @@ async function WatchlistContent() {
 
 export default function WatchlistPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Watchlist</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-3xl font-bold tracking-tight">Watchlist</h1>
+        <p className="mt-1 text-muted-foreground">
           Your saved coins. Track prices and quick access your favorites.
         </p>
       </div>

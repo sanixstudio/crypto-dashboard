@@ -46,7 +46,7 @@ async function CoinDetailContent({ id }: { id: string }) {
     const description = coin.description?.en;
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
         <RecordCoinView
           id={coin.id}
           name={coin.name}
@@ -60,18 +60,20 @@ async function CoinDetailContent({ id }: { id: string }) {
           </Button>
         </Link>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex items-center gap-4">
-            <Image
-              src={coin.image.large}
-              alt={coin.name}
-              width={64}
-              height={64}
-              className="rounded-full"
-            />
+          <div className="flex items-center gap-5">
+            <div className="relative">
+              <Image
+                src={coin.image.large}
+                alt={coin.name}
+                width={72}
+                height={72}
+                className="rounded-2xl ring-2 ring-border/50 shadow-lg"
+              />
+            </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-3xl font-bold">{coin.name}</h1>
-                <Badge variant="secondary" className="uppercase">{coin.symbol}</Badge>
+                <h1 className="text-3xl font-bold tracking-tight">{coin.name}</h1>
+                <Badge variant="secondary" className="uppercase font-mono">{coin.symbol}</Badge>
                 <WatchlistButton
                   coinId={id}
                   isInWatchlist={watchlist.includes(id)}
@@ -110,7 +112,7 @@ async function CoinDetailContent({ id }: { id: string }) {
           </TabsContent>
         </Tabs>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card>
+          <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
             <CardHeader className="pb-2">
               <p className="text-sm text-muted-foreground">Market Cap</p>
             </CardHeader>
@@ -118,7 +120,7 @@ async function CoinDetailContent({ id }: { id: string }) {
               <p className="text-xl font-semibold">{formatCompact(marketCap)}</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
             <CardHeader className="pb-2">
               <p className="text-sm text-muted-foreground">24h Volume</p>
             </CardHeader>
@@ -126,7 +128,7 @@ async function CoinDetailContent({ id }: { id: string }) {
               <p className="text-xl font-semibold">{formatCompact(totalVolume)}</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
             <CardHeader className="pb-2">
               <p className="text-sm text-muted-foreground">All-Time High</p>
             </CardHeader>
@@ -134,7 +136,7 @@ async function CoinDetailContent({ id }: { id: string }) {
               <p className="text-xl font-semibold">{formatPriceWithSymbol(ath, currency)}</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
             <CardHeader className="pb-2">
               <p className="text-sm text-muted-foreground">All-Time Low</p>
             </CardHeader>
@@ -145,7 +147,7 @@ async function CoinDetailContent({ id }: { id: string }) {
         </div>
 
         {description && (
-          <Card>
+          <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <h3 className="text-sm font-medium">About {coin.name}</h3>
             </CardHeader>
@@ -167,7 +169,7 @@ async function CoinDetailContent({ id }: { id: string }) {
 function ChartCard({ data, currency }: { data: import("@/lib/api/coingecko-types").OHLCData; currency: string }) {
   const label = currency.toUpperCase();
   return (
-    <Card>
+    <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
       <CardHeader>
         <h3 className="text-sm font-medium">Price Chart ({label})</h3>
       </CardHeader>

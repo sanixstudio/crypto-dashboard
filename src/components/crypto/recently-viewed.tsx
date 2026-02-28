@@ -65,10 +65,10 @@ export function RecentlyViewed() {
   if (items.length === 0) return null;
 
   return (
-    <Card>
+    <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
       <CardHeader className="pb-2">
-        <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-          <Clock className="h-4 w-4" />
+        <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2 tracking-wide uppercase">
+          <Clock className="h-4 w-4 text-primary/70" />
           Recently Viewed
         </h3>
       </CardHeader>
@@ -78,7 +78,7 @@ export function RecentlyViewed() {
             <Link
               key={item.id}
               href={`/coin/${item.id}`}
-              className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm transition-colors hover:bg-accent/50"
+              className="flex items-center gap-2 rounded-lg border border-border/60 bg-background/50 px-3 py-2 text-sm transition-all hover:border-primary/30 hover:bg-accent/50"
             >
               <Image
                 src={item.image}

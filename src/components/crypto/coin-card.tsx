@@ -24,17 +24,19 @@ export function CoinCard({ coin, inWatchlist = false, onWatchlistToggle, currenc
   const isPositive = change24h >= 0;
 
   return (
-    <Link href={`/coin/${coin.id}`}>
-      <Card className="transition-colors hover:bg-accent/50 cursor-pointer h-full">
+    <Link href={`/coin/${coin.id}`} className="block h-full group">
+      <Card className="relative h-full cursor-pointer overflow-hidden border-border/60 bg-card/80 backdrop-blur-sm transition-all duration-300 hover:border-primary/30 hover:bg-accent/40 hover:shadow-lg hover:shadow-primary/5">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <div className="flex items-center gap-2">
-            <Image
-              src={coin.image}
-              alt={coin.name}
-              width={32}
-              height={32}
-              className="rounded-full"
-            />
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Image
+                src={coin.image}
+                alt={coin.name}
+                width={40}
+                height={40}
+                className="rounded-full ring-2 ring-border/50 transition-all duration-300 group-hover:ring-primary/30"
+              />
+            </div>
             <div>
               <p className="text-sm font-medium">{coin.name}</p>
               <p className="text-xs text-muted-foreground uppercase">{coin.symbol}</p>
@@ -42,7 +44,7 @@ export function CoinCard({ coin, inWatchlist = false, onWatchlistToggle, currenc
           </div>
           <div className="flex items-center gap-1">
             {coin.market_cap_rank != null && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs font-mono tabular-nums">
                 #{coin.market_cap_rank}
               </Badge>
             )}
@@ -55,7 +57,7 @@ export function CoinCard({ coin, inWatchlist = false, onWatchlistToggle, currenc
         </CardHeader>
         <CardContent>
           <div className="flex items-start justify-between gap-2">
-            <p className="text-2xl font-bold">{formatPriceWithSymbol(coin.current_price, currency)}</p>
+            <p className="text-xl font-bold tabular-nums">{formatPriceWithSymbol(coin.current_price, currency)}</p>
             <Sparkline
               data={coin.sparkline_in_7d?.price}
               positive={isPositive}

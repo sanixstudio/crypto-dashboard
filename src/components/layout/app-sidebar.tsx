@@ -35,14 +35,16 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="border-b border-sidebar-border">
+    <Sidebar collapsible="icon" className="border-r border-sidebar-border/80">
+      <SidebarHeader className="border-b border-sidebar-border/60 px-3">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild size="lg" tooltip="CryptoDash">
-              <Link href="/">
-                <span className="flex size-6 shrink-0 items-center justify-center text-lg font-semibold" aria-hidden>₿</span>
-                <span className="group-data-[collapsible=icon]:hidden">CryptoDash</span>
+            <SidebarMenuButton asChild size="lg" tooltip="CryptoDash" className="gap-2">
+              <Link href="/" className="group/logo">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary text-lg font-bold transition-colors group-hover/logo:bg-primary/20" aria-hidden>
+                  ₿
+                </span>
+                <span className="font-semibold tracking-tight group-data-[collapsible=icon]:hidden">CryptoDash</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

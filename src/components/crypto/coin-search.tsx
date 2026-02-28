@@ -79,7 +79,7 @@ export function CoinSearch() {
             value={query}
             onChange={handleChange}
             onFocus={handleFocus}
-            className="pl-9 pr-9"
+            className="pl-9 pr-9 rounded-lg border-border/60 bg-background/50 focus-visible:ring-primary/50"
             aria-autocomplete="list"
             aria-expanded={showPopover}
           />
@@ -90,7 +90,7 @@ export function CoinSearch() {
       </PopoverAnchor>
       <PopoverContent
         align="start"
-        className="w-[var(--radix-popper-anchor-width)] min-w-64 p-0"
+        className="w-[var(--radix-popper-anchor-width)] min-w-64 rounded-xl border-border/60 p-0 backdrop-blur-xl"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         {loading ? (
@@ -108,7 +108,7 @@ export function CoinSearch() {
                 <button
                   type="button"
                   onClick={() => handleSelect(coin.id)}
-                  className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
+                  className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
                 >
                   <Image
                     src={coin.thumb}

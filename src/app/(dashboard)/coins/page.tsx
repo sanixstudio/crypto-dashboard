@@ -32,10 +32,10 @@ async function CoinsContent({
   const hasPrev = page > 1;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Top Coins</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-3xl font-bold tracking-tight">Top Coins</h1>
+        <p className="mt-1 text-muted-foreground">
           Cryptocurrencies by market capitalization
         </p>
       </div>
@@ -49,15 +49,15 @@ async function CoinsContent({
           />
         ))}
       </div>
-      <div className="flex items-center justify-between">
-        <Button variant="outline" size="sm" asChild disabled={!hasPrev}>
+      <div className="flex items-center justify-between pt-2">
+        <Button variant="outline" size="sm" className="rounded-lg" asChild disabled={!hasPrev}>
           <Link href={hasPrev ? `/coins?page=${page - 1}` : "#"}>
             <ChevronLeft className="mr-1 h-4 w-4" />
             Previous
           </Link>
         </Button>
         <span className="text-sm text-muted-foreground">Page {page}</span>
-        <Button variant="outline" size="sm" asChild disabled={!hasNext}>
+        <Button variant="outline" size="sm" className="rounded-lg" asChild disabled={!hasNext}>
           <Link href={hasNext ? `/coins?page=${page + 1}` : "#"}>
             Next
             <ChevronRight className="ml-1 h-4 w-4" />
