@@ -1,7 +1,7 @@
 /**
  * CoinGecko API client for free-tier endpoints.
- * Rate limit: ~30 calls/min (public API).
- * Uses api.coingecko.com - no API key required for free tier.
+ * Uses api.coingecko.com with optional Demo API key for better rate limits.
+ * @see https://www.coingecko.com/en/developers/dashboard
  */
 
 import type {
@@ -25,7 +25,11 @@ export class CoinGeckoRateLimitError extends Error {
   }
 }
 
-/** Request config - extend for API key when using Demo/Pro tier */
+/** Demo API key from env - improves rate limits vs public API */
+function getApiKey(): string | undefined {
+  return process.env.COINGECKO_API_KEY?.trim() || undefined;
+}
+
 const getHeaders = (): HeadersInit => ({
   Accept: "application/json",
   "User-Agent": "CryptoDashboard/1.0",
@@ -42,10 +46,15 @@ async function fetchApi<T>(
   options?: FetchOptions
 ): Promise<T> {
   const url = new URL(`${BASE_URL}${endpoint}`);
+  const apiKey = getApiKey();
+
   if (params) {
     Object.entries(params).forEach(([k, v]) => {
       if (v != null && v !== "") url.searchParams.set(k, v);
     });
+  }
+  if (apiKey) {
+    url.searchParams.set("x_cg_demo_api_key", apiKey);
   }
 
   const revalidate = options?.revalidate ?? 60;

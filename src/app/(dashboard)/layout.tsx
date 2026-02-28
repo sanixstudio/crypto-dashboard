@@ -1,8 +1,15 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { CoinSearch } from "@/components/crypto/coin-search";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 /**
- * Dashboard layout with sidebar and search.
+ * Dashboard layout with collapsible sidebar (shadcn/ui).
+ * Uses SidebarProvider for state; SidebarInset for main content.
+ * Cmd/Ctrl+B toggles sidebar.
  */
 export default function DashboardLayout({
   children,
@@ -10,14 +17,15 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen">
+    <SidebarProvider>
       <AppSidebar />
-      <main className="flex-1 overflow-auto">
-        <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b border-border bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <SidebarInset>
+        <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <SidebarTrigger />
           <CoinSearch />
         </header>
-        <div className="p-6">{children}</div>
-      </main>
-    </div>
+        <div className="flex-1 overflow-auto p-6">{children}</div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
