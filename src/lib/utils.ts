@@ -38,3 +38,23 @@ export function formatPercent(value: number | null | undefined): string {
   const sign = value >= 0 ? "+" : "";
   return `${sign}${value.toFixed(2)}%`;
 }
+
+/** Currency display symbols */
+export const CURRENCY_SYMBOLS: Record<string, string> = {
+  usd: "$",
+  eur: "€",
+  gbp: "£",
+};
+
+/**
+ * Format price with currency symbol.
+ */
+export function formatPriceWithSymbol(
+  price: number | null | undefined,
+  currency = "usd"
+): string {
+  if (price == null) return "—";
+  const sym = CURRENCY_SYMBOLS[currency] ?? "$";
+  const formatted = formatPrice(price);
+  return formatted === "—" ? "—" : `${sym}${formatted}`;
+}

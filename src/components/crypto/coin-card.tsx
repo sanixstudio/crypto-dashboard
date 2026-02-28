@@ -1,22 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CoinMarket } from "@/lib/api/coingecko-types";
-import { formatPrice, formatCompact, formatPercent, cn } from "@/lib/utils";
+import { formatPrice, formatCompact, formatPercent, formatPriceWithSymbol, cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { WatchlistButton } from "@/components/crypto/watchlist-button";
+import { Sparkline } from "@/components/crypto/sparkline";
 
 interface CoinCardProps {
   coin: CoinMarket;
   inWatchlist?: boolean;
   onWatchlistToggle?: () => void;
+  /** Display currency for price formatting (default usd) */
+  currency?: string;
 }
 
 /**
  * Card displaying coin market summary with link to detail.
  */
-export function CoinCard({ coin, inWatchlist = false, onWatchlistToggle }: CoinCardProps) {
+export function CoinCard({ coin, inWatchlist = false, onWatchlistToggle, currency = "usd" }: CoinCardProps) {
   const change24h = coin.price_change_percentage_24h ?? 0;
   const isPositive = change24h >= 0;
 
@@ -51,7 +54,13 @@ export function CoinCard({ coin, inWatchlist = false, onWatchlistToggle }: CoinC
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold">{formatPrice(coin.current_price)}</p>
+          <div className="flex items-start justify-between gap-2">
+            <p className="text-2xl font-bold">{formatPriceWithSymbol(coin.current_price, currency)}</p>
+            <Sparkline
+              data={coin.sparkline_in_7d?.price}
+              positive={isPositive}
+            />
+          </div>
           <div className="mt-2 flex items-center gap-1 text-sm">
             {isPositive ? (
               <TrendingUp className="h-4 w-4 text-emerald-500" />

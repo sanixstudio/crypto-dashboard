@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toggleWatchlist } from "@/app/actions/watchlist";
@@ -38,9 +39,14 @@ export function WatchlistButton({
     const result = await toggleWatchlist(coinId);
     setOptimisticInList(null);
     router.refresh();
-    if (result.success) onToggle?.();
-    if (!result.success && result.error === "Sign in required") {
+    if (result.success) {
+      toast.success(!displayed ? "Added to watchlist" : "Removed from watchlist");
+      onToggle?.();
+    } else if (result.error === "Sign in required") {
+      toast.error("Sign in to save coins to your watchlist");
       window.location.href = "/sign-in";
+    } else {
+      toast.error(result.error ?? "Something went wrong");
     }
   };
 

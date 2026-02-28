@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { getWatchlist } from "@/app/actions/watchlist";
+import { getCurrency } from "@/app/actions/currency";
 import { getCoinsMarkets } from "@/lib/api/coingecko";
 import { CoinCard } from "@/components/crypto/coin-card";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,7 @@ async function WatchlistContent() {
     );
   }
 
-  const watchlist = await getWatchlist();
+  const [watchlist, currency] = await Promise.all([getWatchlist(), getCurrency()]);
   if (watchlist.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 py-16 text-center">
@@ -45,7 +46,7 @@ async function WatchlistContent() {
     );
   }
 
-  const coins = await getCoinsMarkets("usd", 50, 1, watchlist.join(","));
+  const coins = await getCoinsMarkets(currency, 50, 1, watchlist.join(","));
   const ordered = watchlist
     .map((id) => coins.find((c) => c.id === id))
     .filter(Boolean) as typeof coins;
@@ -53,7 +54,7 @@ async function WatchlistContent() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {ordered.map((coin) => (
-        <CoinCard key={coin.id} coin={coin} inWatchlist />
+        <CoinCard key={coin.id} coin={coin} inWatchlist currency={currency} />
       ))}
     </div>
   );

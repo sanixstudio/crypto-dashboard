@@ -14,6 +14,7 @@ import type { CoinMarket } from "@/lib/api/coingecko-types";
 export function CoinSearchPage() {
   const [query, setQuery] = useState("");
   const [coins, setCoins] = useState<CoinMarket[] | null>(null);
+  const [currency, setCurrency] = useState("usd");
   const [loading, setLoading] = useState(false);
   const [watchlist, setWatchlist] = useState<string[]>([]);
   const router = useRouter();
@@ -38,7 +39,9 @@ export function CoinSearchPage() {
         return;
       }
       const marketRes = await fetch(`/api/coins?ids=${encodeURIComponent(coinIds)}`).then((r) => r.json());
-      setCoins(Array.isArray(marketRes) ? marketRes : []);
+      const data = Array.isArray(marketRes) ? { coins: marketRes, currency: "usd" } : marketRes;
+      setCoins(Array.isArray(data.coins) ? data.coins : []);
+      if (data.currency) setCurrency(data.currency);
     } catch {
       setCoins([]);
     } finally {
@@ -80,6 +83,7 @@ export function CoinSearchPage() {
                 key={coin.id}
                 coin={coin}
                 inWatchlist={watchlist.includes(coin.id)}
+                currency={currency}
                 onWatchlistToggle={() =>
                   fetch("/api/watchlist")
                     .then((r) => r.json())

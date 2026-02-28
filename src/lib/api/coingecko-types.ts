@@ -98,12 +98,25 @@ export interface TrendingSearch {
   exchanges: unknown[];
 }
 
+/** Coin detail links from /coins/{id} */
+export interface CoinDetailLinks {
+  homepage?: string[];
+  whitepaper?: string;
+  blockchain_site?: string[];
+  official_forum_url?: string[];
+  subreddit_url?: string;
+  twitter_screen_name?: string;
+  telegram_channel_identifier?: string;
+  repos_url?: { github?: string[]; bitbucket?: string[] };
+}
+
 /** Coin detail from /coins/{id} (full) */
 export interface CoinDetail {
   id: string;
   symbol: string;
   name: string;
   image: { thumb: string; small: string; large: string };
+  links?: CoinDetailLinks;
   market_data: {
     current_price: Record<string, number>;
     market_cap: Record<string, number>;
