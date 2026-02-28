@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CryptoDash – Cryptocurrency Dashboard
+
+A modern crypto dashboard built with **Next.js 16**, **shadcn/ui**, **CoinGecko API**, and **Clerk** authentication. Features real-time market data, price charts, search, and dark/light theming.
+
+## Features
+
+- **Dashboard** – Global market stats and top coins by market cap
+- **Top Coins** – Browse top 50 cryptocurrencies
+- **Search** – Search coins by name or symbol with instant results
+- **Trending** – Most searched coins in the last 24 hours
+- **Coin Detail** – Price charts (7d, 30d, 90d), ATH/ATL, volume
+- **Theme** – Dark, light, and system theme support
+- **Auth** – Sign in/sign up and protected settings (Clerk)
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **UI:** shadcn/ui, Tailwind CSS, Recharts
+- **Data:** CoinGecko API (free tier)
+- **Auth:** Clerk
+- **Theming:** next-themes
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Environment Variables
+
+Copy `.env.example` to `.env.local` and fill in:
+
+```bash
+cp .env.example .env.local
+```
+
+**Required for full auth (optional for basic use):**
+
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` – from [Clerk Dashboard](https://dashboard.clerk.com)
+- `CLERK_SECRET_KEY` – from Clerk Dashboard
+
+The app runs without Clerk keys; sign-in and settings will show setup instructions.
+
+### 3. Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. CoinGecko API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Uses the public API (no key) with ~30 calls/min rate limit. For a [Demo API key](https://www.coingecko.com/en/developers/dashboard), add `COINGECKO_API_KEY` to `.env.local` and update `src/lib/api/coingecko.ts` to pass it in requests.
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/
+│   ├── (auth)/           # Sign-in, sign-up
+│   ├── (dashboard)/      # Main app routes
+│   │   ├── coin/[id]/    # Coin detail + charts
+│   │   ├── coins/        # Top 50 coins
+│   │   ├── search/       # Search page
+│   │   ├── settings/     # User settings (protected)
+│   │   └── trending/     # Trending coins
+│   └── api/              # API routes (search, coins)
+├── components/
+│   ├── crypto/           # Coin cards, charts, search
+│   ├── layout/           # Sidebar, providers
+│   └── ui/               # shadcn components
+└── lib/
+    ├── api/              # CoinGecko client + types
+    └── utils.ts
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **SSR/ISR** – Dashboard, coins, trending use `revalidate: 60` (1 min)
+- **Client** – Search, charts, theme toggle
+- **Data layer** – `src/lib/api/coingecko.ts` centralizes API calls
+- **API routes** – `/api/search`, `/api/coins` proxy to CoinGecko (avoids CORS)
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `npm run dev` – Start dev server
+- `npm run build` – Production build
+- `npm run start` – Start production server
+- `npm run lint` – Run ESLint
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT
