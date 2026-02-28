@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Search as SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,15 @@ export function CoinSearchPage() {
   const [query, setQuery] = useState("");
   const [coins, setCoins] = useState<CoinMarket[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [watchlist, setWatchlist] = useState<string[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    fetch("/api/watchlist")
+      .then((r) => r.json())
+      .then((d) => setWatchlist(d.watchlist ?? []))
+      .catch(() => setWatchlist([]));
+  }, []);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +75,18 @@ export function CoinSearchPage() {
           {coins.length === 0 ? (
             <p className="text-muted-foreground">No coins found. Try &quot;Bitcoin&quot; or &quot;Ethereum&quot;.</p>
           ) : (
-            coins.map((coin) => <CoinCard key={coin.id} coin={coin} />)
+            coins.map((coin) => (
+              <CoinCard
+                key={coin.id}
+                coin={coin}
+                inWatchlist={watchlist.includes(coin.id)}
+                onWatchlistToggle={() =>
+                  fetch("/api/watchlist")
+                    .then((r) => r.json())
+                    .then((d) => setWatchlist(d.watchlist ?? []))
+                }
+              />
+            ))
           )}
         </div>
       )}

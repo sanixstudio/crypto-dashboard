@@ -2,8 +2,11 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 import { ArrowLeft } from "lucide-react";
 import { getCoinById, getCoinMarketChart } from "@/lib/api/coingecko";
+import { getWatchlist } from "@/app/actions/watchlist";
+import { WatchlistButton } from "@/components/crypto/watchlist-button";
 import { PriceChart } from "@/components/crypto/price-chart";
 import { formatPrice, formatCompact, formatPercent, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -20,11 +23,13 @@ interface PageProps {
 
 async function CoinDetailContent({ id }: { id: string }) {
   try {
-    const [coin, chart7d, chart30d, chart90d] = await Promise.all([
+    const { userId } = await auth();
+    const [coin, chart7d, chart30d, chart90d, watchlist] = await Promise.all([
       getCoinById(id),
       getCoinMarketChart(id, "usd", 7),
       getCoinMarketChart(id, "usd", 30),
       getCoinMarketChart(id, "usd", 90),
+      userId ? getWatchlist() : Promise.resolve([]),
     ]);
     const md = coin.market_data;
     const price = md.current_price?.usd ?? null;
@@ -49,9 +54,14 @@ async function CoinDetailContent({ id }: { id: string }) {
               className="rounded-full"
             />
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-3xl font-bold">{coin.name}</h1>
                 <Badge variant="secondary" className="uppercase">{coin.symbol}</Badge>
+                <WatchlistButton
+                  coinId={id}
+                  isInWatchlist={watchlist.includes(id)}
+                  variant="full"
+                />
               </div>
               <p className="text-2xl font-semibold mt-1">{formatPrice(price)}</p>
               <div className="flex gap-4 text-sm mt-1">

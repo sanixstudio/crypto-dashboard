@@ -5,15 +5,18 @@ import { formatPrice, formatCompact, formatPercent, cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown } from "lucide-react";
+import { WatchlistButton } from "@/components/crypto/watchlist-button";
 
 interface CoinCardProps {
   coin: CoinMarket;
+  inWatchlist?: boolean;
+  onWatchlistToggle?: () => void;
 }
 
 /**
  * Card displaying coin market summary with link to detail.
  */
-export function CoinCard({ coin }: CoinCardProps) {
+export function CoinCard({ coin, inWatchlist = false, onWatchlistToggle }: CoinCardProps) {
   const change24h = coin.price_change_percentage_24h ?? 0;
   const isPositive = change24h >= 0;
 
@@ -34,11 +37,18 @@ export function CoinCard({ coin }: CoinCardProps) {
               <p className="text-xs text-muted-foreground uppercase">{coin.symbol}</p>
             </div>
           </div>
-          {coin.market_cap_rank != null && (
-            <Badge variant="secondary" className="text-xs">
-              #{coin.market_cap_rank}
-            </Badge>
-          )}
+          <div className="flex items-center gap-1">
+            {coin.market_cap_rank != null && (
+              <Badge variant="secondary" className="text-xs">
+                #{coin.market_cap_rank}
+              </Badge>
+            )}
+            <WatchlistButton
+              coinId={coin.id}
+              isInWatchlist={inWatchlist}
+              onToggle={onWatchlistToggle}
+            />
+          </div>
         </CardHeader>
         <CardContent>
           <p className="text-2xl font-bold">{formatPrice(coin.current_price)}</p>

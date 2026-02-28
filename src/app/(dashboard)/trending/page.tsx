@@ -1,16 +1,23 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { auth } from "@clerk/nextjs/server";
 import { getTrendingCoins, getSimplePrices, CoinGeckoRateLimitError } from "@/lib/api/coingecko";
+import { getWatchlist } from "@/app/actions/watchlist";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { WatchlistButton } from "@/components/crypto/watchlist-button";
 
 export const revalidate = 300;
 
 async function TrendingContent() {
-  const trending = await getTrendingCoins();
+  const { userId } = await auth();
+  const [trending, watchlist] = await Promise.all([
+    getTrendingCoins(),
+    userId ? getWatchlist() : Promise.resolve([]),
+  ]);
   const ids = trending.coins.map((c) => c.item.id);
   let prices: Record<string, { usd?: number; usd_24h_change?: number }> = {};
   let rateLimited = false;
@@ -58,10 +65,14 @@ async function TrendingContent() {
                     height={40}
                     className="rounded-full"
                   />
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p className="font-medium">{item.name}</p>
                     <p className="text-xs text-muted-foreground uppercase">{item.symbol}</p>
                   </div>
+                  <WatchlistButton
+                    coinId={item.id}
+                    isInWatchlist={watchlist.includes(item.id)}
+                  />
                 </CardHeader>
                 <CardContent>
                   {usd != null ? (

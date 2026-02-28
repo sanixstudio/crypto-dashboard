@@ -1,12 +1,18 @@
 import { Suspense } from "react";
+import { auth } from "@clerk/nextjs/server";
 import { getCoinsMarkets } from "@/lib/api/coingecko";
+import { getWatchlist } from "@/app/actions/watchlist";
 import { CoinCard } from "@/components/crypto/coin-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const revalidate = 60;
 
 async function CoinsContent() {
-  const coins = await getCoinsMarkets("usd", 50, 1);
+  const { userId } = await auth();
+  const [coins, watchlist] = await Promise.all([
+    getCoinsMarkets("usd", 50, 1),
+    userId ? getWatchlist() : Promise.resolve([]),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -16,7 +22,11 @@ async function CoinsContent() {
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {coins.map((coin) => (
-          <CoinCard key={coin.id} coin={coin} />
+          <CoinCard
+            key={coin.id}
+            coin={coin}
+            inWatchlist={watchlist.includes(coin.id)}
+          />
         ))}
       </div>
     </div>
