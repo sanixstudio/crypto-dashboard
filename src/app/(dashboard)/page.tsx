@@ -7,6 +7,7 @@ import { getCurrency } from "@/app/actions/currency";
 import { GlobalStats } from "@/components/crypto/global-stats";
 import { CoinCard } from "@/components/crypto/coin-card";
 import { RecentlyViewed } from "@/components/crypto/recently-viewed";
+import { PortfolioDashboardCard } from "@/components/crypto/portfolio-dashboard-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -68,7 +69,10 @@ async function DashboardContent() {
         </div>
       )}
 
-      {userId && watchlistCoins.length > 0 && (
+      {userId && (
+        <>
+          <PortfolioDashboardCard />
+          {watchlistCoins.length > 0 && (
         <div>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold">Your Watchlist</h2>
@@ -84,6 +88,8 @@ async function DashboardContent() {
             ))}
           </div>
         </div>
+          )}
+        </>
       )}
 
       <GlobalStats data={globalData} currency={currency} />

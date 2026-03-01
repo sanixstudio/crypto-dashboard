@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback } from "react";
-import { Share2, Link2, ExternalLink } from "lucide-react";
+import Link from "next/link";
+import { Share2, Link2, ExternalLink, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import type { CoinDetailLinks } from "@/lib/api/coingecko-types";
@@ -69,6 +70,12 @@ export function CoinDetailActions({ coinId, coinName, links }: CoinDetailActions
 
   return (
     <div className="flex flex-wrap items-center gap-2">
+      <Button variant="outline" size="sm" asChild>
+        <Link href={`/portfolio?add=${encodeURIComponent(coinId)}`}>
+          <Wallet className="mr-1.5 h-4 w-4" />
+          Add to Portfolio
+        </Link>
+      </Button>
       <Button variant="outline" size="sm" onClick={handleShare}>
         <Share2 className="mr-1.5 h-4 w-4" />
         Share
