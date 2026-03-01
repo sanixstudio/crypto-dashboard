@@ -144,7 +144,11 @@ export interface CoinDetail {
     price_change_percentage_7d: number | null;
     market_cap_change_percentage_24h: number | null;
     ath: Record<string, number>;
+    ath_date?: Record<string, string>;
     atl: Record<string, number>;
+    atl_date?: Record<string, string>;
+    high_24h?: Record<string, number>;
+    low_24h?: Record<string, number>;
   };
   description?: { en?: string };
 }

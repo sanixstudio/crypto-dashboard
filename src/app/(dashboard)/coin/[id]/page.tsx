@@ -4,19 +4,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { ArrowLeft } from "lucide-react";
-import { getCoinById, getCoinOHLC } from "@/lib/api/coingecko";
+import { getCoinById } from "@/lib/api/coingecko";
 import { getWatchlist } from "@/app/actions/watchlist";
 import { getCurrency } from "@/app/actions/currency";
 import { WatchlistButton } from "@/components/crypto/watchlist-button";
 import { RecordCoinView } from "@/components/crypto/record-coin-view";
 import { CoinDetailActions } from "@/components/crypto/coin-detail-actions";
 import { CoinHistorySection } from "@/components/crypto/coin-history-section";
-import { CandlestickChart } from "@/components/crypto/candlestick-chart";
+import { CoinChartView } from "@/components/crypto/coin-chart-view";
 import { formatPriceWithSymbol, formatCompact, formatPercent, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const revalidate = 60;
@@ -29,11 +28,8 @@ async function CoinDetailContent({ id }: { id: string }) {
   try {
     const { userId } = await auth();
     const currency = await getCurrency();
-    const [coin, ohlc7d, ohlc30d, ohlc90d, watchlist] = await Promise.all([
+    const [coin, watchlist] = await Promise.all([
       getCoinById(id),
-      getCoinOHLC(id, currency, 7),
-      getCoinOHLC(id, currency, 30),
-      getCoinOHLC(id, currency, 90),
       userId ? getWatchlist() : Promise.resolve([]),
     ]);
     const md = coin.market_data;
@@ -44,6 +40,10 @@ async function CoinDetailContent({ id }: { id: string }) {
     const totalVolume = (md.total_volume as Record<string, number>)?.[currency] ?? md.total_volume?.usd ?? 0;
     const ath = (md.ath as Record<string, number>)?.[currency] ?? md.ath?.usd ?? null;
     const atl = (md.atl as Record<string, number>)?.[currency] ?? md.atl?.usd ?? null;
+    const athDate = (md.ath_date as Record<string, string>)?.[currency] ?? null;
+    const atlDate = (md.atl_date as Record<string, string>)?.[currency] ?? null;
+    const high24h = (md.high_24h as Record<string, number>)?.[currency] ?? null;
+    const low24h = (md.low_24h as Record<string, number>)?.[currency] ?? null;
     const description = coin.description?.en;
 
     return (
@@ -96,23 +96,8 @@ async function CoinDetailContent({ id }: { id: string }) {
             </div>
           </div>
         </div>
-        <Tabs defaultValue="7d" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="7d">7 Days</TabsTrigger>
-            <TabsTrigger value="30d">30 Days</TabsTrigger>
-            <TabsTrigger value="90d">90 Days</TabsTrigger>
-          </TabsList>
-          <TabsContent value="7d">
-            <ChartCard data={ohlc7d} currency={currency} />
-          </TabsContent>
-          <TabsContent value="30d">
-            <ChartCard data={ohlc30d} currency={currency} />
-          </TabsContent>
-          <TabsContent value="90d">
-            <ChartCard data={ohlc90d} currency={currency} />
-          </TabsContent>
-        </Tabs>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <CoinChartView coinId={id} currency={currency} />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
             <CardHeader className="pb-2">
               <p className="text-sm text-muted-foreground">Market Cap</p>
@@ -129,12 +114,40 @@ async function CoinDetailContent({ id }: { id: string }) {
               <p className="text-xl font-semibold">{formatCompact(totalVolume)}</p>
             </CardContent>
           </Card>
+          {high24h != null && (
+            <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
+              <CardHeader className="pb-2">
+                <p className="text-sm text-muted-foreground">24h High</p>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xl font-semibold">{formatPriceWithSymbol(high24h, currency)}</p>
+              </CardContent>
+            </Card>
+          )}
+          {low24h != null && (
+            <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
+              <CardHeader className="pb-2">
+                <p className="text-sm text-muted-foreground">24h Low</p>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xl font-semibold">{formatPriceWithSymbol(low24h, currency)}</p>
+              </CardContent>
+            </Card>
+          )}
           <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
             <CardHeader className="pb-2">
               <p className="text-sm text-muted-foreground">All-Time High</p>
             </CardHeader>
             <CardContent>
               <p className="text-xl font-semibold">{formatPriceWithSymbol(ath, currency)}</p>
+              {ath != null && price != null && ath > 0 && (
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {formatPercent(((price - ath) / ath) * 100)} from ATH
+                </p>
+              )}
+              {athDate && (
+                <p className="text-xs text-muted-foreground">{new Date(athDate).toLocaleDateString()}</p>
+              )}
             </CardContent>
           </Card>
           <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
@@ -143,6 +156,14 @@ async function CoinDetailContent({ id }: { id: string }) {
             </CardHeader>
             <CardContent>
               <p className="text-xl font-semibold">{formatPriceWithSymbol(atl, currency)}</p>
+              {atl != null && price != null && atl > 0 && (
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {formatPercent(((price - atl) / atl) * 100)} from ATL
+                </p>
+              )}
+              {atlDate && (
+                <p className="text-xs text-muted-foreground">{new Date(atlDate).toLocaleDateString()}</p>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -173,20 +194,6 @@ async function CoinDetailContent({ id }: { id: string }) {
   } catch {
     notFound();
   }
-}
-
-function ChartCard({ data, currency }: { data: import("@/lib/api/coingecko-types").OHLCData; currency: string }) {
-  const label = currency.toUpperCase();
-  return (
-    <Card className="border-border/60 bg-card/80 backdrop-blur-sm">
-      <CardHeader>
-        <h3 className="text-sm font-medium">Price Chart ({label})</h3>
-      </CardHeader>
-      <CardContent>
-        <CandlestickChart data={data} height={350} />
-      </CardContent>
-    </Card>
-  );
 }
 
 export default async function CoinDetailPage({ params }: PageProps) {
