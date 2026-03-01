@@ -2,13 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import type { CoinMarket } from "@/lib/api/coingecko-types";
-import { formatPriceWithSymbol, formatCompact, formatPercent, cn } from "@/lib/utils";
+import {
+  formatPriceWithSymbol,
+  formatCompact,
+  formatPercent,
+  cn,
+} from "@/lib/utils";
 import { WatchlistButton } from "@/components/crypto/watchlist-button";
 import { Sparkline } from "@/components/crypto/sparkline";
-
-type SortKey = "market_cap_rank" | "price" | "change24h" | "market_cap";
 
 interface CoinsTableProps {
   coins: CoinMarket[];
@@ -19,23 +21,33 @@ interface CoinsTableProps {
 /**
  * Compact table view for coins list with sortable columns.
  */
-export function CoinsTable({
-  coins,
-  inWatchlist,
-  currency,
-}: CoinsTableProps) {
+export function CoinsTable({ coins, inWatchlist, currency }: CoinsTableProps) {
   return (
     <div className="rounded-lg border border-border/60 overflow-hidden">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-border/60 bg-muted/30">
-            <th className="px-4 py-3 text-left font-medium text-muted-foreground">#</th>
-            <th className="px-4 py-3 text-left font-medium text-muted-foreground">Coin</th>
-            <th className="px-4 py-3 text-right font-medium text-muted-foreground">Price</th>
-            <th className="px-4 py-3 text-right font-medium text-muted-foreground">24h %</th>
-            <th className="px-4 py-3 text-right font-medium text-muted-foreground">7d %</th>
-            <th className="px-4 py-3 text-right font-medium text-muted-foreground">Market Cap</th>
-            <th className="px-4 py-3 text-right font-medium text-muted-foreground w-24">7D</th>
+            <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+              #
+            </th>
+            <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+              Coin
+            </th>
+            <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+              Price
+            </th>
+            <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+              24h %
+            </th>
+            <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+              7d %
+            </th>
+            <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+              Market Cap
+            </th>
+            <th className="px-4 py-3 text-right font-medium text-muted-foreground w-24">
+              7D
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -66,7 +78,9 @@ export function CoinsTable({
                       />
                       <div className="min-w-0">
                         <p className="font-medium truncate">{coin.name}</p>
-                        <p className="text-xs text-muted-foreground uppercase">{coin.symbol}</p>
+                        <p className="text-xs text-muted-foreground uppercase">
+                          {coin.symbol}
+                        </p>
                       </div>
                     </Link>
                     <WatchlistButton
@@ -81,7 +95,9 @@ export function CoinsTable({
                 <td
                   className={cn(
                     "px-4 py-3 text-right font-medium tabular-nums",
-                    isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+                    isPositive
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-red-600 dark:text-red-400",
                   )}
                 >
                   {formatPercent(change24h)}
@@ -89,7 +105,9 @@ export function CoinsTable({
                 <td
                   className={cn(
                     "px-4 py-3 text-right font-medium tabular-nums",
-                    (change7d ?? 0) >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+                    (change7d ?? 0) >= 0
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-red-600 dark:text-red-400",
                   )}
                 >
                   {formatPercent(change7d)}

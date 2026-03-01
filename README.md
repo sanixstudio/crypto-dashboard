@@ -1,14 +1,22 @@
 # CryptoDash – Cryptocurrency Dashboard
 
-A modern crypto dashboard built with **Next.js 16**, **shadcn/ui**, **CoinGecko API**, and **Clerk** authentication. Features real-time market data, price charts, search, and dark/light theming.
+A modern crypto dashboard built with **Next.js 16**, **shadcn/ui**, **CoinGecko API**, and **Clerk** authentication. Features real-time market data, price charts, portfolio tracking, search, and dark/light theming.
+
+## Documentation
+
+- **[Features & User Guide](docs/FEATURES.md)** – App capabilities, user flows, and product overview
+- **[Technical Architecture](docs/ARCHITECTURE.md)** – Tech stack, project structure, data flow, and API details
 
 ## Features
 
-- **Dashboard** – Global market stats and top coins by market cap
-- **Top Coins** – Browse top 50 cryptocurrencies
-- **Search** – Search coins by name or symbol with instant results
+- **Dashboard** – Global market stats, market dominance chart, portfolio summary, top gainers/losers
+- **Portfolio** – Manual holdings with P&L, cost basis, and allocation
+- **Watchlist** – Save and sync favorite coins across devices
+- **Top Coins** – Grid or table view with sortable data
+- **Categories** – Browse coins by category
 - **Trending** – Most searched coins in the last 24 hours
-- **Coin Detail** – Price charts (7d, 30d, 90d), ATH/ATL, volume
+- **Coin Detail** – Candlestick/Area charts, 1D–Max ranges, ATH/ATL context, historical snapshot
+- **Search** – Header search with instant results
 - **Theme** – Dark, light, and system theme support
 - **Auth** – Sign in/sign up and protected settings (Clerk)
 
@@ -57,24 +65,22 @@ Uses the public API (no key) with ~30 calls/min rate limit. For a [Demo API key]
 
 ## Project Structure
 
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full structure. Summary:
+
 ```
 src/
 ├── app/
 │   ├── (auth)/           # Sign-in, sign-up
-│   ├── (dashboard)/      # Main app routes
-│   │   ├── coin/[id]/    # Coin detail + charts
-│   │   ├── coins/        # Top 50 coins
-│   │   ├── search/       # Search page
-│   │   ├── settings/     # User settings (protected)
-│   │   └── trending/     # Trending coins
-│   └── api/              # API routes (search, coins)
+│   ├── (dashboard)/      # Main app routes (dashboard, portfolio, coins, etc.)
+│   ├── actions/          # Server Actions (currency, watchlist, portfolio)
+│   └── api/              # API routes (search, coins, chart, history)
 ├── components/
-│   ├── crypto/           # Coin cards, charts, search
-│   ├── layout/           # Sidebar, providers
+│   ├── crypto/           # Coin cards, charts, portfolio, search
+│   ├── layout/           # Sidebar
 │   └── ui/               # shadcn components
 └── lib/
     ├── api/              # CoinGecko client + types
-    └── utils.ts
+    └── user-preferences.ts
 ```
 
 ## Architecture

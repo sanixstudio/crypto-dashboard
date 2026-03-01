@@ -191,7 +191,7 @@ export function AddHoldingForm({
                   )}
                 </div>
               </PopoverAnchor>
-              <PopoverContent align="start" className="w-[var(--radix-popper-anchor-width)] p-0">
+              <PopoverContent align="start" className="w-(--radix-popper-anchor-width) p-0">
                 {results.length === 0 ? (
                   <div className="px-4 py-6 text-center text-sm text-muted-foreground">
                     No results found

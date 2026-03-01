@@ -11,7 +11,6 @@ import {
 } from "recharts";
 import {
   ChartContainer,
-  ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
@@ -39,11 +38,7 @@ interface AreaVolumeChartProps {
  * Area chart for price with volume bars underneath.
  * Uses market_chart data (prices + total_volumes).
  */
-export function AreaVolumeChart({
-  data,
-  currency,
-  height = 350,
-}: AreaVolumeChartProps) {
+export function AreaVolumeChart({ data, height = 350 }: AreaVolumeChartProps) {
   const volByTime = new Map<number, number>();
   (data.total_volumes ?? []).forEach(([ts, v]) => volByTime.set(ts, v));
 
@@ -65,14 +60,29 @@ export function AreaVolumeChart({
 
   return (
     <ChartContainer config={chartConfig} className="w-full" style={{ height }}>
-      <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+      <ComposedChart
+        data={chartData}
+        margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+      >
         <defs>
           <linearGradient id="fillPriceArea" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--color-price)" stopOpacity={0.4} />
-            <stop offset="100%" stopColor="var(--color-price)" stopOpacity={0} />
+            <stop
+              offset="0%"
+              stopColor="var(--color-price)"
+              stopOpacity={0.4}
+            />
+            <stop
+              offset="100%"
+              stopColor="var(--color-price)"
+              stopOpacity={0}
+            />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+        <CartesianGrid
+          strokeDasharray="3 3"
+          vertical={false}
+          stroke="hsl(var(--border))"
+        />
         <XAxis
           dataKey="time"
           axisLine={false}

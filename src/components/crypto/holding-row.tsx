@@ -6,12 +6,7 @@ import Link from "next/link";
 import { Pencil, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  formatPriceWithSymbol,
-  formatPercent,
-  formatCompact,
-  cn,
-} from "@/lib/utils";
+import { formatPriceWithSymbol, formatPercent, cn } from "@/lib/utils";
 import type { Holding } from "@/lib/user-preferences";
 import type { CoinMarket } from "@/lib/api/coingecko-types";
 import { updateHolding, removeHolding } from "@/app/actions/portfolio";
@@ -31,7 +26,7 @@ export function HoldingRow({ holding, coin, currency }: HoldingRowProps) {
   const [editing, setEditing] = useState(false);
   const [amount, setAmount] = useState(String(holding.amount));
   const [costBasis, setCostBasis] = useState(
-    holding.costBasis != null ? String(holding.costBasis) : ""
+    holding.costBasis != null ? String(holding.costBasis) : "",
   );
   const [submitting, setSubmitting] = useState(false);
 
@@ -54,7 +49,10 @@ export function HoldingRow({ holding, coin, currency }: HoldingRowProps) {
       return;
     }
     setSubmitting(true);
-    const result = await updateHolding(holding.id, { amount: amt, costBasis: cb });
+    const result = await updateHolding(holding.id, {
+      amount: amt,
+      costBasis: cb,
+    });
     setSubmitting(false);
     if (result.success) {
       toast.success("Holding updated");
@@ -77,8 +75,11 @@ export function HoldingRow({ holding, coin, currency }: HoldingRowProps) {
   };
 
   const displayName = coin?.name ?? holding.coinId;
-  const displaySymbol = coin?.symbol?.toUpperCase() ?? holding.coinId.toUpperCase();
-  const image = coin?.image ?? `https://assets.coingecko.com/coins/images/1/small/bitcoin.png`;
+  const displaySymbol =
+    coin?.symbol?.toUpperCase() ?? holding.coinId.toUpperCase();
+  const image =
+    coin?.image ??
+    `https://assets.coingecko.com/coins/images/1/small/bitcoin.png`;
 
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-border/60 bg-card/80 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -97,7 +98,9 @@ export function HoldingRow({ holding, coin, currency }: HoldingRowProps) {
           >
             {displayName}
           </Link>
-          <p className="text-xs text-muted-foreground uppercase">{displaySymbol}</p>
+          <p className="text-xs text-muted-foreground uppercase">
+            {displaySymbol}
+          </p>
         </div>
       </div>
       {editing ? (
@@ -127,7 +130,11 @@ export function HoldingRow({ holding, coin, currency }: HoldingRowProps) {
           </div>
           <div className="flex gap-1">
             <Button size="sm" onClick={handleSave} disabled={submitting}>
-              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+              {submitting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Save"
+              )}
             </Button>
             <Button
               size="sm"
@@ -136,7 +143,7 @@ export function HoldingRow({ holding, coin, currency }: HoldingRowProps) {
                 setEditing(false);
                 setAmount(String(holding.amount));
                 setCostBasis(
-                  holding.costBasis != null ? String(holding.costBasis) : ""
+                  holding.costBasis != null ? String(holding.costBasis) : "",
                 );
               }}
             >
@@ -159,7 +166,9 @@ export function HoldingRow({ holding, coin, currency }: HoldingRowProps) {
               <span
                 className={cn(
                   "font-medium tabular-nums",
-                  pl >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+                  pl >= 0
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : "text-red-600 dark:text-red-400",
                 )}
               >
                 {formatPercent(plPercent)}

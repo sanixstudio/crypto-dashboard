@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import {
   ChartContainer,
-  ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
@@ -21,8 +20,14 @@ interface GlobalStatsProps {
  */
 export function GlobalStats({ data, currency = "usd" }: GlobalStatsProps) {
   const d = data.data;
-  const totalCap = (d.total_market_cap as Record<string, number>)?.[currency] ?? d.total_market_cap?.usd ?? 0;
-  const totalVol = (d.total_volume as Record<string, number>)?.[currency] ?? d.total_volume?.usd ?? 0;
+  const totalCap =
+    (d.total_market_cap as Record<string, number>)?.[currency] ??
+    d.total_market_cap?.usd ??
+    0;
+  const totalVol =
+    (d.total_volume as Record<string, number>)?.[currency] ??
+    d.total_volume?.usd ??
+    0;
   const capChange = d.market_cap_change_percentage_24h_usd ?? 0;
   const volChange = d.volume_change_percentage_24h_usd ?? 0;
   const dominance = (d.market_cap_percentage ?? {}) as Record<string, number>;
@@ -48,7 +53,7 @@ export function GlobalStats({ data, currency = "usd" }: GlobalStatsProps) {
     dominanceData.map((item) => [
       item.name,
       { label: item.name, color: item.fill },
-    ])
+    ]),
   );
 
   return (
@@ -61,25 +66,39 @@ export function GlobalStats({ data, currency = "usd" }: GlobalStatsProps) {
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-lg p-4 transition-colors hover:bg-muted/30">
-            <p className="text-2xl font-bold tabular-nums">{formatCompact(totalCap)}</p>
+            <p className="text-2xl font-bold tabular-nums">
+              {formatCompact(totalCap)}
+            </p>
             <p className="text-xs text-muted-foreground">Total Market Cap</p>
-            <p className={`text-xs ${capChange >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+            <p
+              className={`text-xs ${capChange >= 0 ? "text-emerald-600" : "text-red-600"}`}
+            >
               {formatPercent(capChange)} 24h
             </p>
           </div>
           <div className="rounded-lg p-4 transition-colors hover:bg-muted/30">
-            <p className="text-2xl font-bold tabular-nums">{formatCompact(totalVol)}</p>
+            <p className="text-2xl font-bold tabular-nums">
+              {formatCompact(totalVol)}
+            </p>
             <p className="text-xs text-muted-foreground">24h Volume</p>
-            <p className={`text-xs ${volChange >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+            <p
+              className={`text-xs ${volChange >= 0 ? "text-emerald-600" : "text-red-600"}`}
+            >
               {formatPercent(volChange)} 24h
             </p>
           </div>
           <div className="rounded-lg p-4 transition-colors hover:bg-muted/30">
-            <p className="text-2xl font-bold tabular-nums">{d.active_cryptocurrencies?.toLocaleString() ?? "—"}</p>
-            <p className="text-xs text-muted-foreground">Active Cryptocurrencies</p>
+            <p className="text-2xl font-bold tabular-nums">
+              {d.active_cryptocurrencies?.toLocaleString() ?? "—"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Active Cryptocurrencies
+            </p>
           </div>
           <div className="rounded-lg p-4 transition-colors hover:bg-muted/30">
-            <p className="text-2xl font-bold tabular-nums">{d.markets?.toLocaleString() ?? "—"}</p>
+            <p className="text-2xl font-bold tabular-nums">
+              {d.markets?.toLocaleString() ?? "—"}
+            </p>
             <p className="text-xs text-muted-foreground">Markets</p>
           </div>
         </CardContent>
@@ -94,7 +113,10 @@ export function GlobalStats({ data, currency = "usd" }: GlobalStatsProps) {
           </CardHeader>
           <CardContent>
             <div className="grid gap-6 lg:grid-cols-2">
-              <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[280px] w-full">
+              <ChartContainer
+                config={chartConfig}
+                className="mx-auto aspect-square max-h-[280px] w-full"
+              >
                 <PieChart>
                   <Pie
                     data={dominanceData}
@@ -107,7 +129,11 @@ export function GlobalStats({ data, currency = "usd" }: GlobalStatsProps) {
                     nameKey="name"
                   >
                     {dominanceData.map((entry) => (
-                      <Cell key={entry.name} fill={entry.fill} stroke="transparent" />
+                      <Cell
+                        key={entry.name}
+                        fill={entry.fill}
+                        stroke="transparent"
+                      />
                     ))}
                   </Pie>
                   <Tooltip
@@ -129,7 +155,9 @@ export function GlobalStats({ data, currency = "usd" }: GlobalStatsProps) {
                       className="h-3 w-3 shrink-0 rounded-full"
                       style={{ backgroundColor: fill }}
                     />
-                    <span className="text-sm font-semibold uppercase tracking-wider">{name}</span>
+                    <span className="text-sm font-semibold uppercase tracking-wider">
+                      {name}
+                    </span>
                     <span className="text-sm font-mono tabular-nums text-muted-foreground">
                       {value.toFixed(1)}%
                     </span>
